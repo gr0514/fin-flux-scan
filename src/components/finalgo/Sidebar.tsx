@@ -25,28 +25,32 @@ export function AppSidebar({ active = "Dashboard" }: { active?: string }) {
 
       <nav className="flex-1 px-3 py-6 space-y-1">
         <p className="px-3 pb-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">Workspace</p>
-        {items.map((item) => (
-          <button
-            key={item.title}
-            className={cn(
-              "group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
-              item.active
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-            )}
-          >
-            {item.active && (
-              <span className="absolute left-0 top-1/2 h-6 -translate-y-1/2 w-[3px] rounded-r-full bg-primary shadow-glow-primary" />
-            )}
-            <item.icon className={cn("h-4 w-4", item.active ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-            <span className="flex-1 text-left font-medium">{item.title}</span>
-            {item.badge && (
-              <span className="rounded-full bg-danger/15 px-2 py-0.5 text-[10px] font-semibold text-danger">
-                {item.badge}
-              </span>
-            )}
-          </button>
-        ))}
+        {items.map((item) => {
+          const isActive = item.title === active;
+          return (
+            <Link
+              key={item.title}
+              to={item.to}
+              className={cn(
+                "group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+              )}
+            >
+              {isActive && (
+                <span className="absolute left-0 top-1/2 h-6 -translate-y-1/2 w-[3px] rounded-r-full bg-primary shadow-glow-primary" />
+              )}
+              <item.icon className={cn("h-4 w-4", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+              <span className="flex-1 text-left font-medium">{item.title}</span>
+              {"badge" in item && item.badge && (
+                <span className="rounded-full bg-danger/15 px-2 py-0.5 text-[10px] font-semibold text-danger">
+                  {item.badge}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="m-3 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
