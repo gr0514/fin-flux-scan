@@ -1,15 +1,16 @@
 import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { title: "Dashboard", icon: LayoutDashboard, active: true },
-  { title: "Analytics", icon: BarChart3 },
-  { title: "Alerts", icon: Bell, badge: 3 },
-  { title: "History", icon: History },
-  { title: "Settings", icon: Settings },
+  { title: "Dashboard", icon: LayoutDashboard, to: "/" },
+  { title: "Analytics", icon: BarChart3, to: "/analytics" },
+  { title: "Alerts", icon: Bell, badge: 3, to: "/alerts" },
+  { title: "History", icon: History, to: "/history" },
+  { title: "Settings", icon: Settings, to: "/settings" },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ active = "Dashboard" }: { active?: string }) {
   return (
     <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex items-center gap-2 px-6 h-16 border-b border-sidebar-border">
