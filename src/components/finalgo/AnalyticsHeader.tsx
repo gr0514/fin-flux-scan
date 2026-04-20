@@ -1,8 +1,10 @@
 import { Calendar, ChevronDown, Download, FileText, Bell } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function AnalyticsHeader() {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-6 backdrop-blur-xl">
+      <SidebarTrigger className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-card/60 border border-border rounded-lg" />
       <div className="min-w-0">
         <h1 className="font-display text-base font-semibold tracking-tight text-foreground truncate">
           Historical Analytics & Deep Dive
