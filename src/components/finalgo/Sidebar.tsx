@@ -1,4 +1,4 @@
-import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity } from "lucide-react";
+import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -9,7 +9,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
@@ -25,92 +24,150 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
 
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-sidebar-border [&_[data-sidebar=sidebar]]:bg-sidebar"
+      className={cn(
+        "border-r border-sidebar-border",
+        // Force solid sidebar background everywhere (desktop fixed wrapper + mobile sheet)
+        "[&_[data-sidebar=sidebar]]:bg-sidebar"
+      )}
     >
-      <SidebarHeader className="border-b border-sidebar-border h-16 px-4 justify-center">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <div className="grid place-items-center h-9 w-9 shrink-0 rounded-lg bg-gradient-primary shadow-glow-primary">
+      {/* Header: Logo + Toggle */}
+      <SidebarHeader
+        className={cn(
+          "h-16 border-b border-sidebar-border p-0 flex-row items-center",
+          collapsed ? "justify-center px-0" : "justify-between px-4"
+        )}
+      >
+        {collapsed ? (
+          <button
+            onClick={toggleSidebar}
+            aria-label="Expand sidebar"
+            className="grid place-items-center h-9 w-9 rounded-lg bg-gradient-primary shadow-glow-primary hover:opacity-90 transition"
+          >
             <Activity className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
-          </div>
-          {!collapsed && (
-            <div className="leading-tight min-w-0">
-              <p className="font-display text-lg font-semibold tracking-tight text-foreground truncate">
-                MyFinAlgo
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
-                Realtime Engine
-              </p>
+          </button>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="grid place-items-center h-9 w-9 shrink-0 rounded-lg bg-gradient-primary shadow-glow-primary">
+                <Activity className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
+              </div>
+              <div className="leading-tight min-w-0">
+                <p className="font-display text-base font-semibold tracking-tight text-foreground truncate">
+                  MyFinAlgo
+                </p>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
+                  Realtime Engine
+                </p>
+              </div>
             </div>
-          )}
-        </div>
+            <button
+              onClick={toggleSidebar}
+              aria-label="Collapse sidebar"
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition"
+            >
+              <PanelLeft className="h-4 w-4" />
+            </button>
+          </>
+        )}
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
-        <SidebarGroup>
-          {!collapsed && (
-            <SidebarGroupLabel className="px-3 pb-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">
-              Workspace
-            </SidebarGroupLabel>
-          )}
+      <SidebarContent className={cn("py-4", collapsed ? "px-0" : "px-2")}>
+        <SidebarGroup className={collapsed ? "p-0" : ""}>
+          <SidebarGroupLabel className="px-3 pb-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            Workspace
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    className="h-10 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
-                  >
-                    <NavLink
-                      to={item.to}
-                      end={item.to === "/"}
-                      className={({ isActive }) =>
-                        cn(
-                          "group relative flex items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
-                          isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-                        )
-                      }
-                    >
-                      {({ isActive }) => (
-                        <>
-                          {isActive && !collapsed && (
-                            <span className="absolute left-0 top-1/2 h-6 -translate-y-1/2 w-[3px] rounded-r-full bg-primary shadow-glow-primary" />
-                          )}
-                          <item.icon
-                            className={cn(
-                              "h-4 w-4 shrink-0",
-                              isActive
-                                ? "text-primary"
-                                : "text-muted-foreground group-hover:text-foreground"
-                            )}
-                          />
-                          {!collapsed && <span className="flex-1 truncate">{item.title}</span>}
-                        </>
+            <SidebarMenu className={collapsed ? "items-center gap-1.5" : "gap-1"}>
+              {items.map((item) => {
+                const badge = "badge" in item ? item.badge : undefined;
+                return (
+                  <SidebarMenuItem key={item.title} className={collapsed ? "w-auto" : ""}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      className={cn(
+                        "group/btn relative overflow-visible",
+                        collapsed
+                          ? "!h-10 !w-10 !p-0 rounded-lg justify-center"
+                          : "h-10 px-3"
                       )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                  {"badge" in item && item.badge && !collapsed && (
-                    <SidebarMenuBadge className="rounded-full bg-danger/15 px-2 py-0.5 text-[10px] font-semibold text-danger">
-                      {item.badge}
-                    </SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
+                    >
+                      <NavLink to={item.to} end={item.to === "/"}>
+                        {({ isActive }) => (
+                          <>
+                            {/* Active glow border */}
+                            {isActive && (
+                              <span
+                                className={cn(
+                                  "absolute top-1/2 -translate-y-1/2 rounded-r-full bg-primary shadow-glow-primary",
+                                  collapsed ? "left-0 h-6 w-[3px]" : "left-0 h-6 w-[3px]"
+                                )}
+                              />
+                            )}
+                            {/* Active background tint */}
+                            <span
+                              className={cn(
+                                "absolute inset-0 rounded-lg transition-colors",
+                                isActive
+                                  ? "bg-primary/10 ring-1 ring-primary/25"
+                                  : "bg-transparent group-hover/btn:bg-sidebar-accent/60"
+                              )}
+                            />
+                            <item.icon
+                              className={cn(
+                                "h-[18px] w-[18px] shrink-0 relative z-10 transition-colors",
+                                isActive
+                                  ? "text-primary"
+                                  : "text-muted-foreground group-hover/btn:text-foreground"
+                              )}
+                            />
+                            {!collapsed && (
+                              <span
+                                className={cn(
+                                  "relative z-10 flex-1 text-sm font-medium truncate",
+                                  isActive ? "text-foreground" : "text-sidebar-foreground"
+                                )}
+                              >
+                                {item.title}
+                              </span>
+                            )}
+                            {!collapsed && badge && (
+                              <span className="relative z-10 rounded-full bg-danger/15 px-2 py-0.5 text-[10px] font-semibold text-danger">
+                                {badge}
+                              </span>
+                            )}
+                            {collapsed && badge && (
+                              <span className="absolute top-1 right-1 z-10 grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 text-[9px] font-bold text-danger-foreground shadow-glow-danger">
+                                {badge}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      {!collapsed && (
-        <SidebarFooter className="p-3">
+      <SidebarFooter className={cn(collapsed ? "p-2" : "p-3")}>
+        {collapsed ? (
+          <div
+            className="grid place-items-center h-9 w-9 mx-auto rounded-lg bg-sidebar-accent/40 border border-sidebar-border"
+            title="Engine Online · 12ms"
+          >
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-success pulse-dot" />
+          </div>
+        ) : (
           <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-success pulse-dot" />
@@ -121,8 +178,8 @@ export function AppSidebar() {
               <span className="text-success font-mono">12ms</span>
             </p>
           </div>
-        </SidebarFooter>
-      )}
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
