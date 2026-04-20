@@ -162,8 +162,7 @@ const Index = () => {
           </section>
           </main>
         </div>
-      </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
