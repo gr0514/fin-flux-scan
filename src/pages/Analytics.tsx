@@ -152,8 +152,7 @@ const Analytics = () => {
           </section>
           </main>
         </div>
-      </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
