@@ -9,10 +9,10 @@ import { TransactionFeed } from "@/components/finalgo/TransactionFeed";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen w-full bg-background text-foreground">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
       <AppSidebar />
 
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
         <Header />
 
         <main className="flex-1 px-6 lg:px-8 py-6 space-y-6">

@@ -12,7 +12,7 @@ const items = [
 
 export function AppSidebar({ active = "Dashboard" }: { active?: string }) {
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+    <aside className="hidden md:flex sticky top-0 h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex items-center gap-2 px-6 h-16 border-b border-sidebar-border">
         <div className="grid place-items-center h-9 w-9 rounded-lg bg-gradient-primary shadow-glow-primary">
           <Activity className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
