@@ -6,16 +6,18 @@ import { Sparkline } from "@/components/finalgo/Sparkline";
 import { LiveFlowChart } from "@/components/finalgo/LiveFlowChart";
 import { HealthRing } from "@/components/finalgo/HealthRing";
 import { TransactionFeed } from "@/components/finalgo/TransactionFeed";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Index = () => {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-      <AppSidebar />
+    <SidebarProvider>
+      <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+        <AppSidebar />
 
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
-        <Header />
+        <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
+          <Header />
 
-        <main className="flex-1 px-6 lg:px-8 py-6 space-y-6">
+          <main className="flex-1 px-6 lg:px-8 py-6 space-y-6">
           {/* Title row */}
           <div className="flex items-end justify-between gap-4">
             <div>

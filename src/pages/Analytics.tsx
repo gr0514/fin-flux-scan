@@ -6,16 +6,18 @@ import { AnomalyTrendsChart } from "@/components/finalgo/AnomalyTrendsChart";
 import { RiskHeatmap } from "@/components/finalgo/RiskHeatmap";
 import { ConfusionMatrix } from "@/components/finalgo/ConfusionMatrix";
 import { HistoricalTable } from "@/components/finalgo/HistoricalTable";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Analytics = () => {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-      <AppSidebar active="Analytics" />
+    <SidebarProvider>
+      <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+        <AppSidebar />
 
-      <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
-        <AnalyticsHeader />
+        <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
+          <AnalyticsHeader />
 
-        <main className="flex-1 px-6 lg:px-8 py-6 space-y-6">
+          <main className="flex-1 px-6 lg:px-8 py-6 space-y-6">
           {/* Summary band */}
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
