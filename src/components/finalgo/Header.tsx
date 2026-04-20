@@ -1,8 +1,10 @@
 import { Bell, Search, ChevronDown } from "lucide-react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-6 backdrop-blur-xl">
+      <SidebarTrigger className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-card/60 border border-border rounded-lg" />
       <div className="flex items-center gap-2.5 rounded-full border border-success/25 bg-success/10 px-3 py-1.5">
         <span className="relative inline-flex h-2 w-2 rounded-full bg-success pulse-dot" />
         <span className="text-xs font-medium text-success">SignalR: Connected</span>
