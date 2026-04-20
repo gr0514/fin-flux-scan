@@ -162,9 +162,10 @@ const Index = () => {
             </div>
             <TransactionFeed />
           </section>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

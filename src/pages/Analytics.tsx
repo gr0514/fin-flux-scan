@@ -152,9 +152,10 @@ const Analytics = () => {
               <HistoricalTable />
             </div>
           </section>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
