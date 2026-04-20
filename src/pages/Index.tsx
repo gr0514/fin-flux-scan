@@ -6,12 +6,10 @@ import { Sparkline } from "@/components/finalgo/Sparkline";
 import { LiveFlowChart } from "@/components/finalgo/LiveFlowChart";
 import { HealthRing } from "@/components/finalgo/HealthRing";
 import { TransactionFeed } from "@/components/finalgo/TransactionFeed";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Index = () => {
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground w-full">
         <AppSidebar />
 
         <div className="flex flex-1 flex-col min-w-0 h-screen overflow-y-auto">
@@ -164,8 +162,7 @@ const Index = () => {
           </section>
           </main>
         </div>
-      </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
