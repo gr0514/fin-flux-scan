@@ -1,6 +1,9 @@
-import { Bell, Search, ChevronDown } from "lucide-react";
+import { Bell, Search, ChevronDown, Sun, Moon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 export function Header() {
+  const { theme, toggle } = useTheme();
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-6 backdrop-blur-xl">
       <div className="flex items-center gap-2.5 rounded-full border border-success/25 bg-success/10 px-3 py-1.5">
@@ -26,12 +29,27 @@ export function Header() {
           <kbd className="absolute right-2 top-1/2 -translate-y-1/2 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">⌘K</kbd>
         </div>
 
-        <button className="relative grid h-10 w-10 place-items-center rounded-lg border border-border bg-card/60 text-muted-foreground transition hover:text-foreground hover:border-primary/40">
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger shadow-glow-danger" />
+        <button
+          onClick={toggle}
+          aria-label="Toggle theme"
+          className="grid h-10 w-10 place-items-center rounded-lg border border-border bg-card/60 text-muted-foreground transition hover:text-foreground hover:border-primary/40"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </button>
 
-        <div className="flex items-center gap-3 rounded-lg border border-border bg-card/60 pl-1 pr-3 py-1 hover:border-primary/40 transition cursor-pointer">
+        <Link
+          to="/notifications"
+          aria-label="Notifications"
+          className="relative grid h-10 w-10 place-items-center rounded-lg border border-border bg-card/60 text-muted-foreground transition hover:text-foreground hover:border-primary/40"
+        >
+          <Bell className="h-4 w-4" />
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger shadow-glow-danger" />
+        </Link>
+
+        <Link
+          to="/settings"
+          className="flex items-center gap-3 rounded-lg border border-border bg-card/60 pl-1 pr-3 py-1 hover:border-primary/40 transition cursor-pointer"
+        >
           <div className="grid h-8 w-8 place-items-center rounded-md bg-gradient-primary text-primary-foreground text-xs font-semibold">
             AK
           </div>
@@ -40,7 +58,7 @@ export function Header() {
             <p className="text-[10px] text-muted-foreground">Risk Analyst</p>
           </div>
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-        </div>
+        </Link>
       </div>
     </header>
   );
