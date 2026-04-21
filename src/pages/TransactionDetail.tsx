@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, AlertTriangle, CheckCircle2, Clock, MapPin, CreditCard, Cpu, ShieldAlert, Copy, ExternalLink } from "lucide-react";
+import {
+  ArrowLeft, AlertTriangle, CheckCircle2, Clock, MapPin, CreditCard, Cpu,
+  ShieldAlert, Copy, ExternalLink, Check, Flag, Activity, Globe, TrendingUp,
+  Smartphone, ChevronRight,
+} from "lucide-react";
 import { AppSidebar } from "@/components/finalgo/Sidebar";
 import { Header } from "@/components/finalgo/Header";
 import { Button } from "@/components/ui/button";
@@ -12,9 +16,13 @@ const tx = {
   amount: 84920.0,
   currency: "USD",
   status: "anomaly" as const,
+  accountId: "acc_8821",
   account: "•••• 7710",
+  merchantId: "mer_acme_otc",
   merchant: "Acme Crypto OTC",
   location: "Caracas, VE",
+  lat: 10.4806,
+  lon: -66.9036,
   device: "iPhone 15 · iOS 17.5",
   ip: "190.142.12.34",
   riskScore: 0.94,
@@ -35,9 +43,9 @@ const rawJson = JSON.stringify(
     id: tx.id,
     timestamp: tx.createdAt,
     amount: { value: tx.amount, currency: tx.currency },
-    account: { masked: tx.account, holder_id: "user_8821" },
-    merchant: { name: tx.merchant, mcc: "6051" },
-    geo: { city: "Caracas", country: "VE", lat: 10.4806, lon: -66.9036 },
+    account: { id: tx.accountId, masked: tx.account, holder_id: "user_8821" },
+    merchant: { id: tx.merchantId, name: tx.merchant, mcc: "6051" },
+    geo: { city: "Caracas", country: "VE", lat: tx.lat, lon: tx.lon },
     device: { user_agent: tx.device, ip: tx.ip, fingerprint: "fp_9f2a7c42aabb" },
     risk: {
       score: tx.riskScore,
@@ -49,6 +57,33 @@ const rawJson = JSON.stringify(
   null,
   2
 );
+
+const riskFactors = [
+  {
+    icon: Globe,
+    title: "Unusual geographic location",
+    desc: "Account historically transacts in DE/AT — first activity from VE.",
+    weight: 0.34,
+  },
+  {
+    icon: TrendingUp,
+    title: "High velocity in last 24h",
+    desc: "12 transactions in 6h vs. baseline of 2/day.",
+    weight: 0.28,
+  },
+  {
+    icon: Activity,
+    title: "Amount above 99th percentile",
+    desc: "$84,920 vs. account median of $312.",
+    weight: 0.22,
+  },
+  {
+    icon: Smartphone,
+    title: "New device fingerprint",
+    desc: "First seen 14 minutes before this transaction.",
+    weight: 0.10,
+  },
+];
 
 const TransactionDetail = () => {
   const { id } = useParams();
