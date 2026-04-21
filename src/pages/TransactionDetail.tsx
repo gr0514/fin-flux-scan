@@ -237,6 +237,109 @@ const TransactionDetail = () => {
             </div>
           </div>
 
+          {/* Risk Breakdown + Mini Map */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="card-surface p-6 lg:col-span-2">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="font-display text-base font-semibold tracking-tight">
+                    Risk breakdown
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Why this scored {tx.riskScore.toFixed(2)} — top contributing factors.
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-mono text-2xl font-semibold text-danger tabular-nums">
+                    {tx.riskScore.toFixed(2)}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    threshold 0.85
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-3">
+                {riskFactors.map((f) => {
+                  const pct = Math.round(f.weight * 100);
+                  return (
+                    <li key={f.title} className="rounded-lg border border-border/60 bg-background/30 p-3">
+                      <div className="flex items-start gap-3">
+                        <div className="grid place-items-center h-8 w-8 rounded-md bg-danger/10 text-danger ring-1 ring-danger/20 shrink-0">
+                          <f.icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-medium text-foreground">{f.title}</p>
+                            <span className="font-mono text-[11px] text-danger tabular-nums">
+                              +{pct}%
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{f.desc}</p>
+                          <div className="mt-2 h-1 w-full rounded-full bg-border overflow-hidden">
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${pct * 2.5}%`,
+                                background: "var(--gradient-danger)",
+                                maxWidth: "100%",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Mini Map */}
+            <div className="card-surface p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="font-display text-base font-semibold tracking-tight">
+                    Origin
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
+                    <MapPin className="h-3 w-3" /> {tx.location}
+                  </p>
+                </div>
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${tx.lat}&mlon=${tx.lon}#map=12/${tx.lat}/${tx.lon}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  Open <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+              <div className="relative rounded-lg overflow-hidden border border-border/60 ring-1 ring-danger/20">
+                <iframe
+                  title="Transaction location map"
+                  src={mapUrl}
+                  className="w-full h-[220px] block"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-danger/30" />
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5">
+                  <p className="text-muted-foreground">Latitude</p>
+                  <p className="font-mono text-foreground">{tx.lat.toFixed(4)}</p>
+                </div>
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5">
+                  <p className="text-muted-foreground">Longitude</p>
+                  <p className="font-mono text-foreground">{tx.lon.toFixed(4)}</p>
+                </div>
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5 col-span-2">
+                  <p className="text-muted-foreground">IP</p>
+                  <p className="font-mono text-foreground">{tx.ip}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Timeline */}
             <div className="card-surface p-6">
@@ -303,12 +406,6 @@ const TransactionDetail = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button variant="outline">Mark reviewed</Button>
-            <Button className="text-primary-foreground" style={{ background: "var(--gradient-danger)" }}>
-              Block account
-            </Button>
-          </div>
         </main>
       </div>
     </div>
