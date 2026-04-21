@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, Clock, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 type Status = "approved" | "pending" | "anomaly";
@@ -48,6 +49,7 @@ function StatusBadge({ status }: { status: Status }) {
 }
 
 export function TransactionFeed() {
+  const navigate = useNavigate();
   return (
     <div className="overflow-hidden rounded-lg border border-border/60">
       <table className="w-full text-sm">
@@ -67,8 +69,9 @@ export function TransactionFeed() {
             return (
               <tr
                 key={r.id}
+                onClick={() => navigate(`/transactions/${r.id}`)}
                 className={cn(
-                  "group border-t border-border/40 transition-colors",
+                  "group border-t border-border/40 transition-colors cursor-pointer",
                   anomaly
                     ? "bg-danger/10 hover:bg-danger/15 row-flash"
                     : "hover:bg-primary/5"
