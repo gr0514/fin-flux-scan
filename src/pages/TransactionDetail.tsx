@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, AlertTriangle, CheckCircle2, Clock, MapPin, CreditCard, Cpu, ShieldAlert, Copy, ExternalLink } from "lucide-react";
+import {
+  ArrowLeft, AlertTriangle, CheckCircle2, Clock, MapPin, CreditCard, Cpu,
+  ShieldAlert, Copy, ExternalLink, Check, Flag, Activity, Globe, TrendingUp,
+  Smartphone, ChevronRight,
+} from "lucide-react";
 import { AppSidebar } from "@/components/finalgo/Sidebar";
 import { Header } from "@/components/finalgo/Header";
 import { Button } from "@/components/ui/button";
@@ -12,9 +16,13 @@ const tx = {
   amount: 84920.0,
   currency: "USD",
   status: "anomaly" as const,
+  accountId: "acc_8821",
   account: "•••• 7710",
+  merchantId: "mer_acme_otc",
   merchant: "Acme Crypto OTC",
   location: "Caracas, VE",
+  lat: 10.4806,
+  lon: -66.9036,
   device: "iPhone 15 · iOS 17.5",
   ip: "190.142.12.34",
   riskScore: 0.94,
@@ -35,9 +43,9 @@ const rawJson = JSON.stringify(
     id: tx.id,
     timestamp: tx.createdAt,
     amount: { value: tx.amount, currency: tx.currency },
-    account: { masked: tx.account, holder_id: "user_8821" },
-    merchant: { name: tx.merchant, mcc: "6051" },
-    geo: { city: "Caracas", country: "VE", lat: 10.4806, lon: -66.9036 },
+    account: { id: tx.accountId, masked: tx.account, holder_id: "user_8821" },
+    merchant: { id: tx.merchantId, name: tx.merchant, mcc: "6051" },
+    geo: { city: "Caracas", country: "VE", lat: tx.lat, lon: tx.lon },
     device: { user_agent: tx.device, ip: tx.ip, fingerprint: "fp_9f2a7c42aabb" },
     risk: {
       score: tx.riskScore,
@@ -50,9 +58,37 @@ const rawJson = JSON.stringify(
   2
 );
 
+const riskFactors = [
+  {
+    icon: Globe,
+    title: "Unusual geographic location",
+    desc: "Account historically transacts in DE/AT — first activity from VE.",
+    weight: 0.34,
+  },
+  {
+    icon: TrendingUp,
+    title: "High velocity in last 24h",
+    desc: "12 transactions in 6h vs. baseline of 2/day.",
+    weight: 0.28,
+  },
+  {
+    icon: Activity,
+    title: "Amount above 99th percentile",
+    desc: "$84,920 vs. account median of $312.",
+    weight: 0.22,
+  },
+  {
+    icon: Smartphone,
+    title: "New device fingerprint",
+    desc: "First seen 14 minutes before this transaction.",
+    weight: 0.10,
+  },
+];
+
 const TransactionDetail = () => {
   const { id } = useParams();
   const [copied, setCopied] = useState(false);
+  const [decision, setDecision] = useState<"none" | "approved" | "flagged">("none");
 
   const onCopy = async () => {
     await navigator.clipboard.writeText(rawJson);
@@ -60,6 +96,23 @@ const TransactionDetail = () => {
     toast({ title: "Copied", description: "Raw JSON copied to clipboard." });
     setTimeout(() => setCopied(false), 1500);
   };
+
+  const onApprove = () => {
+    setDecision("approved");
+    toast({ title: "Transaction approved", description: `${id ?? tx.id} marked as legitimate.` });
+  };
+  const onFlag = () => {
+    setDecision("flagged");
+    toast({
+      title: "Flagged as fraud",
+      description: `${id ?? tx.id} sent to the fraud queue.`,
+      variant: "destructive",
+    });
+  };
+
+  // Static OSM embed centered on the geo coords with a marker
+  const bbox = `${tx.lon - 0.05},${tx.lat - 0.04},${tx.lon + 0.05},${tx.lat + 0.04}`;
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${tx.lat},${tx.lon}`;
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
@@ -78,47 +131,212 @@ const TransactionDetail = () => {
           {/* Hero */}
           <div className="card-surface p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
-                    <AlertTriangle className="h-3 w-3" /> Anomalous
-                  </span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  {decision === "approved" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-success/15 px-2 py-1 text-[11px] font-semibold text-success ring-1 ring-success/30">
+                      <CheckCircle2 className="h-3 w-3" /> Approved
+                    </span>
+                  ) : decision === "flagged" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
+                      <Flag className="h-3 w-3" /> Flagged as fraud
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
+                      <AlertTriangle className="h-3 w-3" /> Anomalous
+                    </span>
+                  )}
                   <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
                     {tx.reason}
                   </span>
                 </div>
-                <h1 className="font-display text-2xl font-semibold tracking-tight font-mono">
+                <h1 className="font-display text-2xl font-semibold tracking-tight font-mono break-all">
                   {id ?? tx.id}
                 </h1>
                 <p className="text-xs text-muted-foreground mt-1">{tx.createdAt}</p>
               </div>
-              <div className="text-right">
-                <p className="font-mono text-3xl font-semibold tabular-nums text-danger">
-                  ${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </p>
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mt-1">
-                  {tx.currency}
-                </p>
+
+              <div className="flex flex-col items-end gap-3">
+                <div className="text-right">
+                  <p className="font-mono text-3xl font-semibold tabular-nums text-danger">
+                    ${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mt-1">
+                    {tx.currency}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={onApprove}
+                    disabled={decision === "approved"}
+                    className="gap-1.5 text-success-foreground hover:opacity-90 shadow-glow-success"
+                    style={{ background: "var(--gradient-success)" }}
+                  >
+                    <Check className="h-4 w-4" />
+                    Approve transaction
+                  </Button>
+                  <Button
+                    onClick={onFlag}
+                    disabled={decision === "flagged"}
+                    className="gap-1.5 text-danger-foreground hover:opacity-90 shadow-glow-danger"
+                    style={{ background: "var(--gradient-danger)" }}
+                  >
+                    <Flag className="h-4 w-4" />
+                    Flag as fraud
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-border/60">
-              {[
-                { label: "Account", value: tx.account, icon: CreditCard },
-                { label: "Merchant", value: tx.merchant, icon: ExternalLink },
-                { label: "Location", value: tx.location, icon: MapPin },
-                { label: "Risk score", value: tx.riskScore.toFixed(2), icon: ShieldAlert, highlight: true },
-              ].map((f) => (
-                <div key={f.label}>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
-                    <f.icon className="h-3 w-3" />
-                    {f.label}
-                  </p>
-                  <p className={cn("text-sm font-medium mt-1", f.highlight && "text-danger font-mono")}>
-                    {f.value}
+              <Link
+                to={`/accounts/${tx.accountId}`}
+                className="group block rounded-lg -m-1 p-1 hover:bg-primary/5 transition"
+              >
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <CreditCard className="h-3 w-3" />
+                  Account
+                </p>
+                <p className="text-sm font-medium mt-1 inline-flex items-center gap-1 text-foreground group-hover:text-primary transition">
+                  {tx.account}
+                  <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition" />
+                </p>
+              </Link>
+
+              <Link
+                to={`/merchants/${tx.merchantId}`}
+                className="group block rounded-lg -m-1 p-1 hover:bg-primary/5 transition"
+              >
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <ExternalLink className="h-3 w-3" />
+                  Merchant
+                </p>
+                <p className="text-sm font-medium mt-1 inline-flex items-center gap-1 text-foreground group-hover:text-primary transition">
+                  {tx.merchant}
+                  <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition" />
+                </p>
+              </Link>
+
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <MapPin className="h-3 w-3" />
+                  Location
+                </p>
+                <p className="text-sm font-medium mt-1">{tx.location}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <ShieldAlert className="h-3 w-3" />
+                  Risk score
+                </p>
+                <p className="text-sm font-medium mt-1 text-danger font-mono">
+                  {tx.riskScore.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Risk Breakdown + Mini Map */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="card-surface p-6 lg:col-span-2">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="font-display text-base font-semibold tracking-tight">
+                    Risk breakdown
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Why this scored {tx.riskScore.toFixed(2)} — top contributing factors.
                   </p>
                 </div>
-              ))}
+                <div className="text-right">
+                  <p className="font-mono text-2xl font-semibold text-danger tabular-nums">
+                    {tx.riskScore.toFixed(2)}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    threshold 0.85
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-3">
+                {riskFactors.map((f) => {
+                  const pct = Math.round(f.weight * 100);
+                  return (
+                    <li key={f.title} className="rounded-lg border border-border/60 bg-background/30 p-3">
+                      <div className="flex items-start gap-3">
+                        <div className="grid place-items-center h-8 w-8 rounded-md bg-danger/10 text-danger ring-1 ring-danger/20 shrink-0">
+                          <f.icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-medium text-foreground">{f.title}</p>
+                            <span className="font-mono text-[11px] text-danger tabular-nums">
+                              +{pct}%
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{f.desc}</p>
+                          <div className="mt-2 h-1 w-full rounded-full bg-border overflow-hidden">
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${pct * 2.5}%`,
+                                background: "var(--gradient-danger)",
+                                maxWidth: "100%",
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Mini Map */}
+            <div className="card-surface p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="font-display text-base font-semibold tracking-tight">
+                    Origin
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-0.5 inline-flex items-center gap-1">
+                    <MapPin className="h-3 w-3" /> {tx.location}
+                  </p>
+                </div>
+                <a
+                  href={`https://www.openstreetmap.org/?mlat=${tx.lat}&mlon=${tx.lon}#map=12/${tx.lat}/${tx.lon}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  Open <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+              <div className="relative rounded-lg overflow-hidden border border-border/60 ring-1 ring-danger/20">
+                <iframe
+                  title="Transaction location map"
+                  src={mapUrl}
+                  className="w-full h-[220px] block"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-danger/30" />
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5">
+                  <p className="text-muted-foreground">Latitude</p>
+                  <p className="font-mono text-foreground">{tx.lat.toFixed(4)}</p>
+                </div>
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5">
+                  <p className="text-muted-foreground">Longitude</p>
+                  <p className="font-mono text-foreground">{tx.lon.toFixed(4)}</p>
+                </div>
+                <div className="rounded-md bg-background/40 border border-border/60 px-2.5 py-1.5 col-span-2">
+                  <p className="text-muted-foreground">IP</p>
+                  <p className="font-mono text-foreground">{tx.ip}</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -188,12 +406,6 @@ const TransactionDetail = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
-            <Button variant="outline">Mark reviewed</Button>
-            <Button className="text-primary-foreground" style={{ background: "var(--gradient-danger)" }}>
-              Block account
-            </Button>
-          </div>
         </main>
       </div>
     </div>
