@@ -88,6 +88,7 @@ const riskFactors = [
 const TransactionDetail = () => {
   const { id } = useParams();
   const [copied, setCopied] = useState(false);
+  const [decision, setDecision] = useState<"none" | "approved" | "flagged">("none");
 
   const onCopy = async () => {
     await navigator.clipboard.writeText(rawJson);
@@ -95,6 +96,23 @@ const TransactionDetail = () => {
     toast({ title: "Copied", description: "Raw JSON copied to clipboard." });
     setTimeout(() => setCopied(false), 1500);
   };
+
+  const onApprove = () => {
+    setDecision("approved");
+    toast({ title: "Transaction approved", description: `${id ?? tx.id} marked as legitimate.` });
+  };
+  const onFlag = () => {
+    setDecision("flagged");
+    toast({
+      title: "Flagged as fraud",
+      description: `${id ?? tx.id} sent to the fraud queue.`,
+      variant: "destructive",
+    });
+  };
+
+  // Static OSM embed centered on the geo coords with a marker
+  const bbox = `${tx.lon - 0.05},${tx.lat - 0.04},${tx.lon + 0.05},${tx.lat + 0.04}`;
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${tx.lat},${tx.lon}`;
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
@@ -113,47 +131,109 @@ const TransactionDetail = () => {
           {/* Hero */}
           <div className="card-surface p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
-                    <AlertTriangle className="h-3 w-3" /> Anomalous
-                  </span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  {decision === "approved" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-success/15 px-2 py-1 text-[11px] font-semibold text-success ring-1 ring-success/30">
+                      <CheckCircle2 className="h-3 w-3" /> Approved
+                    </span>
+                  ) : decision === "flagged" ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
+                      <Flag className="h-3 w-3" /> Flagged as fraud
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[11px] font-semibold text-danger ring-1 ring-danger/30">
+                      <AlertTriangle className="h-3 w-3" /> Anomalous
+                    </span>
+                  )}
                   <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
                     {tx.reason}
                   </span>
                 </div>
-                <h1 className="font-display text-2xl font-semibold tracking-tight font-mono">
+                <h1 className="font-display text-2xl font-semibold tracking-tight font-mono break-all">
                   {id ?? tx.id}
                 </h1>
                 <p className="text-xs text-muted-foreground mt-1">{tx.createdAt}</p>
               </div>
-              <div className="text-right">
-                <p className="font-mono text-3xl font-semibold tabular-nums text-danger">
-                  ${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </p>
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground mt-1">
-                  {tx.currency}
-                </p>
+
+              <div className="flex flex-col items-end gap-3">
+                <div className="text-right">
+                  <p className="font-mono text-3xl font-semibold tabular-nums text-danger">
+                    ${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground mt-1">
+                    {tx.currency}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={onApprove}
+                    disabled={decision === "approved"}
+                    className="gap-1.5 text-success-foreground hover:opacity-90 shadow-glow-success"
+                    style={{ background: "var(--gradient-success)" }}
+                  >
+                    <Check className="h-4 w-4" />
+                    Approve transaction
+                  </Button>
+                  <Button
+                    onClick={onFlag}
+                    disabled={decision === "flagged"}
+                    className="gap-1.5 text-danger-foreground hover:opacity-90 shadow-glow-danger"
+                    style={{ background: "var(--gradient-danger)" }}
+                  >
+                    <Flag className="h-4 w-4" />
+                    Flag as fraud
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-border/60">
-              {[
-                { label: "Account", value: tx.account, icon: CreditCard },
-                { label: "Merchant", value: tx.merchant, icon: ExternalLink },
-                { label: "Location", value: tx.location, icon: MapPin },
-                { label: "Risk score", value: tx.riskScore.toFixed(2), icon: ShieldAlert, highlight: true },
-              ].map((f) => (
-                <div key={f.label}>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
-                    <f.icon className="h-3 w-3" />
-                    {f.label}
-                  </p>
-                  <p className={cn("text-sm font-medium mt-1", f.highlight && "text-danger font-mono")}>
-                    {f.value}
-                  </p>
-                </div>
-              ))}
+              <Link
+                to={`/accounts/${tx.accountId}`}
+                className="group block rounded-lg -m-1 p-1 hover:bg-primary/5 transition"
+              >
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <CreditCard className="h-3 w-3" />
+                  Account
+                </p>
+                <p className="text-sm font-medium mt-1 inline-flex items-center gap-1 text-foreground group-hover:text-primary transition">
+                  {tx.account}
+                  <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition" />
+                </p>
+              </Link>
+
+              <Link
+                to={`/merchants/${tx.merchantId}`}
+                className="group block rounded-lg -m-1 p-1 hover:bg-primary/5 transition"
+              >
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <ExternalLink className="h-3 w-3" />
+                  Merchant
+                </p>
+                <p className="text-sm font-medium mt-1 inline-flex items-center gap-1 text-foreground group-hover:text-primary transition">
+                  {tx.merchant}
+                  <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition" />
+                </p>
+              </Link>
+
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <MapPin className="h-3 w-3" />
+                  Location
+                </p>
+                <p className="text-sm font-medium mt-1">{tx.location}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                  <ShieldAlert className="h-3 w-3" />
+                  Risk score
+                </p>
+                <p className="text-sm font-medium mt-1 text-danger font-mono">
+                  {tx.riskScore.toFixed(2)}
+                </p>
+              </div>
             </div>
           </div>
 
