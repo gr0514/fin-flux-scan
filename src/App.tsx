@@ -15,6 +15,7 @@ import Settings from "./pages/Settings.tsx";
 import Notifications from "./pages/Notifications.tsx";
 import TransactionDetail from "./pages/TransactionDetail.tsx";
 import SystemHealth from "./pages/SystemHealth.tsx";
+import RiskRules from "./pages/RiskRules.tsx";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/transactions/:id" element={<TransactionDetail />} />
             <Route path="/system-health" element={<SystemHealth />} />
+            <Route path="/risk-rules" element={<RiskRules />} />
             <Route path="/accounts/:id" element={<NotFound />} />
             <Route path="/merchants/:id" element={<NotFound />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
