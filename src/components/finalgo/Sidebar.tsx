@@ -1,4 +1,4 @@
-import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft } from "lucide-react";
+import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft, HeartPulse } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -20,6 +20,7 @@ const items = [
   { title: "Analytics", icon: BarChart3, to: "/analytics" },
   { title: "Alerts", icon: Bell, badge: 3, to: "/alerts" },
   { title: "History", icon: History, to: "/history" },
+  { title: "System Health", icon: HeartPulse, to: "/system-health" },
   { title: "Settings", icon: Settings, to: "/settings" },
 ];
 
