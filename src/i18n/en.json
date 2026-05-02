@@ -1,0 +1,72 @@
+{
+  "sidebar": {
+    "workspace": "Workspace",
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "alerts": "Alerts",
+    "history": "History",
+    "systemHealth": "System Health",
+    "riskRules": "Risk Rules",
+    "settings": "Settings",
+    "engineOnline": "Engine Online",
+    "inferenceStable": "AI inference latency stable at",
+    "realtimeEngine": "Realtime Engine"
+  },
+  "header": {
+    "signalrConnected": "SignalR: Connected",
+    "live": "• Live",
+    "region": "Region",
+    "searchPlaceholder": "Search transactions, IDs, accounts…",
+    "role": "Risk Analyst"
+  },
+  "dashboard": {
+    "title": "Realtime Operations",
+    "subtitle": "Streaming transactions across",
+    "ingestionNodes": "14 ingestion nodes",
+    "lastSync": "last sync 2s ago",
+    "last1H": "Last 1H",
+    "last24H": "24H",
+    "last7D": "7D",
+    "exportReport": "Export Report",
+    "metrics": {
+      "tps": "Transactions / sec",
+      "totalVolume": "Total Volume Processed",
+      "anomalies": "Anomalies Detected",
+      "aiEngine": "AI Engine Status",
+      "aiActive": "Active",
+      "dailyTarget": "Daily target",
+      "anomaliesDelta": "+9 in 1h",
+      "inference": "Inference",
+      "model": "Model"
+    },
+    "liveFlow": {
+      "title": "Live Transaction Flow",
+      "subtitle": "Volume per second · streaming via SignalR hub",
+      "inflow": "Inflow",
+      "settled": "Settled",
+      "flagged": "Flagged",
+      "now": "now"
+    },
+    "health": {
+      "title": "Microservices Health",
+      "subtitle": "Load · last 30s window",
+      "ingestion": "Data Ingestion",
+      "processing": "C# Processing",
+      "mlEngine": "Python ML Engine"
+    },
+    "feed": {
+      "title": "Live Transaction Feed",
+      "anomaliesBadge": "3 anomalies",
+      "subtitle": "Streaming the last 10 transactions evaluated by the ML pipeline",
+      "all": "All",
+      "approved": "Approved",
+      "pending": "Pending",
+      "anomalies": "Anomalies"
+    }
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  }
+}

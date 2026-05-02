@@ -1,0 +1,72 @@
+{
+  "sidebar": {
+    "workspace": "Không gian làm việc",
+    "dashboard": "Bảng điều khiển",
+    "analytics": "Phân tích",
+    "alerts": "Cảnh báo",
+    "history": "Lịch sử",
+    "systemHealth": "Tình trạng hệ thống",
+    "riskRules": "Quy tắc rủi ro",
+    "settings": "Cài đặt",
+    "engineOnline": "Engine đang hoạt động",
+    "inferenceStable": "Độ trễ suy luận AI ổn định ở mức",
+    "realtimeEngine": "Engine thời gian thực"
+  },
+  "header": {
+    "signalrConnected": "SignalR: Đã kết nối",
+    "live": "• Trực tiếp",
+    "region": "Khu vực",
+    "searchPlaceholder": "Tìm giao dịch, ID, tài khoản…",
+    "role": "Chuyên viên rủi ro"
+  },
+  "dashboard": {
+    "title": "Vận hành thời gian thực",
+    "subtitle": "Đang truyền giao dịch qua",
+    "ingestionNodes": "14 nút thu nhận",
+    "lastSync": "đồng bộ 2 giây trước",
+    "last1H": "1 giờ qua",
+    "last24H": "24 giờ",
+    "last7D": "7 ngày",
+    "exportReport": "Xuất báo cáo",
+    "metrics": {
+      "tps": "Giao dịch / giây",
+      "totalVolume": "Tổng khối lượng xử lý",
+      "anomalies": "Bất thường phát hiện",
+      "aiEngine": "Trạng thái AI Engine",
+      "aiActive": "Đang hoạt động",
+      "dailyTarget": "Mục tiêu ngày",
+      "anomaliesDelta": "+9 trong 1 giờ",
+      "inference": "Suy luận",
+      "model": "Mô hình"
+    },
+    "liveFlow": {
+      "title": "Luồng giao dịch trực tiếp",
+      "subtitle": "Khối lượng mỗi giây · truyền qua SignalR hub",
+      "inflow": "Đầu vào",
+      "settled": "Đã xử lý",
+      "flagged": "Đánh dấu",
+      "now": "bây giờ"
+    },
+    "health": {
+      "title": "Sức khỏe Microservices",
+      "subtitle": "Tải · cửa sổ 30 giây qua",
+      "ingestion": "Thu nhận dữ liệu",
+      "processing": "Xử lý C#",
+      "mlEngine": "Python ML Engine"
+    },
+    "feed": {
+      "title": "Dòng giao dịch trực tiếp",
+      "anomaliesBadge": "3 bất thường",
+      "subtitle": "Truyền 10 giao dịch gần nhất được đánh giá bởi ML pipeline",
+      "all": "Tất cả",
+      "approved": "Đã duyệt",
+      "pending": "Chờ xử lý",
+      "anomalies": "Bất thường"
+    }
+  },
+  "language": {
+    "label": "Ngôn ngữ",
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  }
+}
