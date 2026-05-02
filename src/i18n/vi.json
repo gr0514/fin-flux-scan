@@ -1,12 +1,21 @@
 {
+  "terms": {
+    "riskScore": "Điểm rủi ro",
+    "fraudDetection": "Phát hiện gian lận",
+    "realtimeMonitoring": "Giám sát thời gian thực",
+    "anomalies": "Hành vi bất thường",
+    "systemHealth": "Trạng thái hệ thống",
+    "caseManagement": "Quản lý vụ việc"
+  },
   "sidebar": {
     "workspace": "Không gian làm việc",
     "dashboard": "Bảng điều khiển",
     "analytics": "Phân tích",
     "alerts": "Cảnh báo",
     "history": "Lịch sử",
-    "systemHealth": "Tình trạng hệ thống",
+    "systemHealth": "$t(terms.systemHealth)",
     "riskRules": "Quy tắc rủi ro",
+    "cases": "$t(terms.caseManagement)",
     "settings": "Cài đặt",
     "engineOnline": "Engine đang hoạt động",
     "inferenceStable": "Độ trễ suy luận AI ổn định ở mức",
@@ -20,7 +29,7 @@
     "role": "Chuyên viên rủi ro"
   },
   "dashboard": {
-    "title": "Vận hành thời gian thực",
+    "title": "$t(terms.realtimeMonitoring)",
     "subtitle": "Đang truyền giao dịch qua",
     "ingestionNodes": "14 nút thu nhận",
     "lastSync": "đồng bộ 2 giây trước",
@@ -31,8 +40,9 @@
     "metrics": {
       "tps": "Giao dịch / giây",
       "totalVolume": "Tổng khối lượng xử lý",
-      "anomalies": "Bất thường phát hiện",
-      "aiEngine": "Trạng thái AI Engine",
+      "anomalies": "$t(terms.anomalies)",
+      "riskScore": "$t(terms.riskScore)",
+      "aiEngine": "$t(terms.fraudDetection)",
       "aiActive": "Đang hoạt động",
       "dailyTarget": "Mục tiêu ngày",
       "anomaliesDelta": "+9 trong 1 giờ",
@@ -44,11 +54,11 @@
       "subtitle": "Khối lượng mỗi giây · truyền qua SignalR hub",
       "inflow": "Đầu vào",
       "settled": "Đã xử lý",
-      "flagged": "Đánh dấu",
+      "flagged": "Đánh dấu nghi ngờ",
       "now": "bây giờ"
     },
     "health": {
-      "title": "Sức khỏe Microservices",
+      "title": "$t(terms.systemHealth)",
       "subtitle": "Tải · cửa sổ 30 giây qua",
       "ingestion": "Thu nhận dữ liệu",
       "processing": "Xử lý C#",
@@ -56,12 +66,12 @@
     },
     "feed": {
       "title": "Dòng giao dịch trực tiếp",
-      "anomaliesBadge": "3 bất thường",
-      "subtitle": "Truyền 10 giao dịch gần nhất được đánh giá bởi ML pipeline",
+      "anomaliesBadge": "3 hành vi bất thường",
+      "subtitle": "Truyền 10 giao dịch gần nhất được đánh giá bởi mô hình $t(terms.fraudDetection)",
       "all": "Tất cả",
       "approved": "Đã duyệt",
       "pending": "Chờ xử lý",
-      "anomalies": "Bất thường"
+      "anomalies": "$t(terms.anomalies)"
     }
   },
   "language": {
