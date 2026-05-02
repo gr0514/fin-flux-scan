@@ -1,12 +1,21 @@
 {
+  "terms": {
+    "riskScore": "Risk Score",
+    "fraudDetection": "Fraud Detection",
+    "realtimeMonitoring": "Real-time Monitoring",
+    "anomalies": "Anomalies",
+    "systemHealth": "System Health",
+    "caseManagement": "Case Management"
+  },
   "sidebar": {
     "workspace": "Workspace",
     "dashboard": "Dashboard",
     "analytics": "Analytics",
     "alerts": "Alerts",
     "history": "History",
-    "systemHealth": "System Health",
+    "systemHealth": "$t(terms.systemHealth)",
     "riskRules": "Risk Rules",
+    "cases": "$t(terms.caseManagement)",
     "settings": "Settings",
     "engineOnline": "Engine Online",
     "inferenceStable": "AI inference latency stable at",
@@ -20,7 +29,7 @@
     "role": "Risk Analyst"
   },
   "dashboard": {
-    "title": "Realtime Operations",
+    "title": "$t(terms.realtimeMonitoring)",
     "subtitle": "Streaming transactions across",
     "ingestionNodes": "14 ingestion nodes",
     "lastSync": "last sync 2s ago",
@@ -31,8 +40,9 @@
     "metrics": {
       "tps": "Transactions / sec",
       "totalVolume": "Total Volume Processed",
-      "anomalies": "Anomalies Detected",
-      "aiEngine": "AI Engine Status",
+      "anomalies": "$t(terms.anomalies)",
+      "riskScore": "$t(terms.riskScore)",
+      "aiEngine": "$t(terms.fraudDetection)",
       "aiActive": "Active",
       "dailyTarget": "Daily target",
       "anomaliesDelta": "+9 in 1h",
@@ -48,7 +58,7 @@
       "now": "now"
     },
     "health": {
-      "title": "Microservices Health",
+      "title": "$t(terms.systemHealth)",
       "subtitle": "Load · last 30s window",
       "ingestion": "Data Ingestion",
       "processing": "C# Processing",
@@ -57,11 +67,11 @@
     "feed": {
       "title": "Live Transaction Feed",
       "anomaliesBadge": "3 anomalies",
-      "subtitle": "Streaming the last 10 transactions evaluated by the ML pipeline",
+      "subtitle": "Streaming the last 10 transactions evaluated by the $t(terms.fraudDetection) model",
       "all": "All",
       "approved": "Approved",
       "pending": "Pending",
-      "anomalies": "Anomalies"
+      "anomalies": "$t(terms.anomalies)"
     }
   },
   "language": {
