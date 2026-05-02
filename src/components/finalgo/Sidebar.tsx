@@ -1,5 +1,6 @@
 import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft, HeartPulse, ShieldAlert } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
@@ -15,19 +16,20 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { title: "Dashboard", icon: LayoutDashboard, to: "/" },
-  { title: "Analytics", icon: BarChart3, to: "/analytics" },
-  { title: "Alerts", icon: Bell, badge: 3, to: "/alerts" },
-  { title: "History", icon: History, to: "/history" },
-  { title: "System Health", icon: HeartPulse, to: "/system-health" },
-  { title: "Risk Rules", icon: ShieldAlert, to: "/risk-rules" },
-  { title: "Settings", icon: Settings, to: "/settings" },
-];
-
 export function AppSidebar() {
   const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
+  const { t } = useTranslation();
+
+  const items = [
+    { title: t("sidebar.dashboard"), icon: LayoutDashboard, to: "/" },
+    { title: t("sidebar.analytics"), icon: BarChart3, to: "/analytics" },
+    { title: t("sidebar.alerts"), icon: Bell, badge: 3, to: "/alerts" },
+    { title: t("sidebar.history"), icon: History, to: "/history" },
+    { title: t("sidebar.systemHealth"), icon: HeartPulse, to: "/system-health" },
+    { title: t("sidebar.riskRules"), icon: ShieldAlert, to: "/risk-rules" },
+    { title: t("sidebar.settings"), icon: Settings, to: "/settings" },
+  ];
 
   return (
     <Sidebar
@@ -64,7 +66,7 @@ export function AppSidebar() {
                   MyFinAlgo
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground truncate">
-                  Realtime Engine
+                  {t("sidebar.realtimeEngine")}
                 </p>
               </div>
             </div>
@@ -82,7 +84,7 @@ export function AppSidebar() {
       <SidebarContent className={cn("py-4", collapsed ? "px-0" : "px-2")}>
         <SidebarGroup className={collapsed ? "p-0" : ""}>
           <SidebarGroupLabel className="px-3 pb-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">
-            Workspace
+            {t("sidebar.workspace")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className={collapsed ? "items-center gap-1.5" : "gap-1"}>
@@ -173,10 +175,10 @@ export function AppSidebar() {
           <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-success pulse-dot" />
-              <p className="text-xs font-medium text-foreground">Engine Online</p>
+              <p className="text-xs font-medium text-foreground">{t("sidebar.engineOnline")}</p>
             </div>
             <p className="text-[11px] text-muted-foreground leading-relaxed">
-              AI inference latency stable at{" "}
+              {t("sidebar.inferenceStable")}{" "}
               <span className="text-success font-mono">12ms</span>
             </p>
           </div>
