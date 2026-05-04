@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Users, Search, Filter, ShieldCheck, Lock, UserCog, Activity, AlertTriangle,
-  CheckCircle2, Ban, Globe, MapPin, Monitor, Clock, KeyRound, Mail, Fingerprint,
+  CheckCircle2, Ban, Globe, MapPin, Monitor, Clock, KeyRound, Mail, Fingerprint, ShieldPlus,
 } from "lucide-react";
 import { AppSidebar } from "@/components/finalgo/Sidebar";
 import { Header } from "@/components/finalgo/Header";
@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ROLES_SEED, ROLE_BADGE_CLS, type Role as PermRole } from "@/lib/permissions";
 
-type Role = "admin" | "analyst" | "auditor" | "user";
+type Role = PermRole;
 type RiskLevel = "low" | "medium" | "high" | "critical";
 type Status = "active" | "suspended" | "locked" | "pending";
 
@@ -40,6 +42,7 @@ interface User {
   username: string;
   email: string;
   role: Role;
+  roles?: Role[];
   risk: RiskLevel;
   status: Status;
   lastLogin: string;
@@ -50,6 +53,7 @@ interface User {
 
 const roleMeta: Record<Role, { label: string; cls: string }> = {
   admin:   { label: "Admin",    cls: "bg-primary/10 text-primary border-primary/30" },
+  manager: { label: "Manager",  cls: "bg-success/10 text-success border-success/30" },
   analyst: { label: "Analyst",  cls: "bg-accent/40 text-foreground border-border" },
   auditor: { label: "Auditor",  cls: "bg-warning/10 text-warning border-warning/30" },
   user:    { label: "User",     cls: "bg-muted text-muted-foreground border-border" },
@@ -155,6 +159,8 @@ export default function UserManagement() {
   const [editing, setEditing] = useState<User | null>(null);
   const [draftRole, setDraftRole] = useState<Role>("user");
   const [draftRisk, setDraftRisk] = useState<RiskLevel>("low");
+  const [rolesUser, setRolesUser] = useState<User | null>(null);
+  const [draftRoles, setDraftRoles] = useState<Role[]>([]);
 
   const stats = useMemo(() => ({
     total: users.length,
@@ -184,6 +190,24 @@ export default function UserManagement() {
     setUsers(prev => prev.map(u => u.id === editing.id ? { ...u, role: draftRole, risk: draftRisk } : u));
     toast.success("User updated", { description: `${editing.username} → role: ${draftRole}, risk override: ${draftRisk}` });
     setEditing(null);
+  };
+
+  const openRoles = (u: User) => {
+    setRolesUser(u);
+    setDraftRoles(u.roles ?? [u.role]);
+  };
+
+  const saveRoles = () => {
+    if (!rolesUser) return;
+    if (draftRoles.length === 0) {
+      toast.error("At least one role required", { description: "Assign one or more roles before saving." });
+      return;
+    }
+    setUsers(prev => prev.map(u => u.id === rolesUser.id
+      ? { ...u, roles: draftRoles, role: draftRoles[0] }
+      : u));
+    toast.success("Roles updated", { description: `${rolesUser.username} now has ${draftRoles.length} role(s)` });
+    setRolesUser(null);
   };
 
   return (
@@ -323,9 +347,14 @@ export default function UserManagement() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="outline" size="sm" onClick={() => openEdit(u)}>
-                            <UserCog className="h-3.5 w-3.5 mr-1.5" /> Edit
-                          </Button>
+                          <div className="inline-flex gap-2 justify-end">
+                            <Button variant="outline" size="sm" onClick={() => openRoles(u)}>
+                              <ShieldPlus className="h-3.5 w-3.5 mr-1.5" /> Manage Roles
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => openEdit(u)}>
+                              <UserCog className="h-3.5 w-3.5 mr-1.5" /> Edit
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -450,6 +479,62 @@ export default function UserManagement() {
                 <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
                 <Button onClick={saveEdit} className="bg-gradient-primary text-primary-foreground shadow-glow-primary hover:opacity-90">
                   Save changes
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Manage Roles dialog */}
+      <Dialog open={!!rolesUser} onOpenChange={(o) => !o && setRolesUser(null)}>
+        <DialogContent className="max-w-lg">
+          {rolesUser && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ShieldPlus className="h-5 w-5 text-primary" />
+                  Manage Roles · {rolesUser.username}
+                </DialogTitle>
+                <DialogDescription>
+                  Assign one or multiple roles. Effective permissions are the union of all assigned roles.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-2 py-2">
+                {ROLES_SEED.map((r) => {
+                  const checked = draftRoles.includes(r.id);
+                  return (
+                    <label
+                      key={r.id}
+                      className={cn(
+                        "flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors",
+                        checked ? "border-primary/40 bg-primary/5" : "border-border hover:bg-muted/40"
+                      )}
+                    >
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(v) => {
+                          setDraftRoles((prev) => v ? [...new Set([...prev, r.id])] : prev.filter(x => x !== r.id));
+                        }}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className={cn("font-medium", ROLE_BADGE_CLS[r.id])}>{r.name}</Badge>
+                          <span className="text-[11px] font-mono text-muted-foreground">{r.permissions.length} perms</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{r.description}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setRolesUser(null)}>Cancel</Button>
+                <Button onClick={saveRoles} className="bg-gradient-primary text-primary-foreground shadow-glow-primary hover:opacity-90">
+                  Save Roles
                 </Button>
               </DialogFooter>
             </>
