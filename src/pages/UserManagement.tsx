@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Users, Search, Filter, ShieldCheck, Lock, UserCog, Activity, AlertTriangle,
-  CheckCircle2, Ban, Globe, MapPin, Monitor, Clock, KeyRound, Mail, Fingerprint,
+  CheckCircle2, Ban, Globe, MapPin, Monitor, Clock, KeyRound, Mail, Fingerprint, ShieldPlus,
 } from "lucide-react";
 import { AppSidebar } from "@/components/finalgo/Sidebar";
 import { Header } from "@/components/finalgo/Header";
@@ -20,10 +20,12 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ROLES_SEED, ROLE_BADGE_CLS, type Role as PermRole } from "@/lib/permissions";
 
-type Role = "admin" | "analyst" | "auditor" | "user";
+type Role = PermRole;
 type RiskLevel = "low" | "medium" | "high" | "critical";
 type Status = "active" | "suspended" | "locked" | "pending";
 
@@ -40,6 +42,7 @@ interface User {
   username: string;
   email: string;
   role: Role;
+  roles: Role[];
   risk: RiskLevel;
   status: Status;
   lastLogin: string;
@@ -50,6 +53,7 @@ interface User {
 
 const roleMeta: Record<Role, { label: string; cls: string }> = {
   admin:   { label: "Admin",    cls: "bg-primary/10 text-primary border-primary/30" },
+  manager: { label: "Manager",  cls: "bg-success/10 text-success border-success/30" },
   analyst: { label: "Analyst",  cls: "bg-accent/40 text-foreground border-border" },
   auditor: { label: "Auditor",  cls: "bg-warning/10 text-warning border-warning/30" },
   user:    { label: "User",     cls: "bg-muted text-muted-foreground border-border" },
