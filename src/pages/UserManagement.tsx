@@ -347,9 +347,14 @@ export default function UserManagement() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="outline" size="sm" onClick={() => openEdit(u)}>
-                            <UserCog className="h-3.5 w-3.5 mr-1.5" /> Edit
-                          </Button>
+                          <div className="inline-flex gap-2 justify-end">
+                            <Button variant="outline" size="sm" onClick={() => openRoles(u)}>
+                              <ShieldPlus className="h-3.5 w-3.5 mr-1.5" /> Manage Roles
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => openEdit(u)}>
+                              <UserCog className="h-3.5 w-3.5 mr-1.5" /> Edit
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
