@@ -159,6 +159,8 @@ export default function UserManagement() {
   const [editing, setEditing] = useState<User | null>(null);
   const [draftRole, setDraftRole] = useState<Role>("user");
   const [draftRisk, setDraftRisk] = useState<RiskLevel>("low");
+  const [rolesUser, setRolesUser] = useState<User | null>(null);
+  const [draftRoles, setDraftRoles] = useState<Role[]>([]);
 
   const stats = useMemo(() => ({
     total: users.length,
@@ -188,6 +190,24 @@ export default function UserManagement() {
     setUsers(prev => prev.map(u => u.id === editing.id ? { ...u, role: draftRole, risk: draftRisk } : u));
     toast.success("User updated", { description: `${editing.username} → role: ${draftRole}, risk override: ${draftRisk}` });
     setEditing(null);
+  };
+
+  const openRoles = (u: User) => {
+    setRolesUser(u);
+    setDraftRoles(u.roles ?? [u.role]);
+  };
+
+  const saveRoles = () => {
+    if (!rolesUser) return;
+    if (draftRoles.length === 0) {
+      toast.error("At least one role required", { description: "Assign one or more roles before saving." });
+      return;
+    }
+    setUsers(prev => prev.map(u => u.id === rolesUser.id
+      ? { ...u, roles: draftRoles, role: draftRoles[0] }
+      : u));
+    toast.success("Roles updated", { description: `${rolesUser.username} now has ${draftRoles.length} role(s)` });
+    setRolesUser(null);
   };
 
   return (
