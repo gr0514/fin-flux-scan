@@ -1,4 +1,4 @@
-import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft, HeartPulse, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, BarChart3, Bell, History, Settings, Activity, PanelLeft, HeartPulse, ShieldAlert, Users } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,6 +28,7 @@ export function AppSidebar() {
     { title: t("sidebar.history"), icon: History, to: "/history" },
     { title: t("sidebar.systemHealth"), icon: HeartPulse, to: "/system-health" },
     { title: t("sidebar.riskRules"), icon: ShieldAlert, to: "/risk-rules" },
+    { title: t("sidebar.users", { defaultValue: "Users" }), icon: Users, to: "/users" },
     { title: t("sidebar.settings"), icon: Settings, to: "/settings" },
   ];
 
