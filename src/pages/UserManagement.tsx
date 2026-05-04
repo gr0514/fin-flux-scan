@@ -485,6 +485,62 @@ export default function UserManagement() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Manage Roles dialog */}
+      <Dialog open={!!rolesUser} onOpenChange={(o) => !o && setRolesUser(null)}>
+        <DialogContent className="max-w-lg">
+          {rolesUser && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <ShieldPlus className="h-5 w-5 text-primary" />
+                  Manage Roles · {rolesUser.username}
+                </DialogTitle>
+                <DialogDescription>
+                  Assign one or multiple roles. Effective permissions are the union of all assigned roles.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-2 py-2">
+                {ROLES_SEED.map((r) => {
+                  const checked = draftRoles.includes(r.id);
+                  return (
+                    <label
+                      key={r.id}
+                      className={cn(
+                        "flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors",
+                        checked ? "border-primary/40 bg-primary/5" : "border-border hover:bg-muted/40"
+                      )}
+                    >
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(v) => {
+                          setDraftRoles((prev) => v ? [...new Set([...prev, r.id])] : prev.filter(x => x !== r.id));
+                        }}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className={cn("font-medium", ROLE_BADGE_CLS[r.id])}>{r.name}</Badge>
+                          <span className="text-[11px] font-mono text-muted-foreground">{r.permissions.length} perms</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{r.description}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setRolesUser(null)}>Cancel</Button>
+                <Button onClick={saveRoles} className="bg-gradient-primary text-primary-foreground shadow-glow-primary hover:opacity-90">
+                  Save Roles
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
