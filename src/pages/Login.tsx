@@ -1,28 +1,25 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/hooks/use-toast";
 import { AuthLayout, GoogleButton, Divider } from "@/components/auth/AuthLayout";
+import { useLoginMutation } from "@/hooks/useAuth";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [remember, setRemember] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+
+  // Hook từ React Query
+  const loginMutation = useLoginMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setSubmitting(false);
-    toast({ title: "Welcome back", description: "Signed in successfully." });
-    navigate("/");
+    loginMutation.mutate({ userName, password });
   };
 
   return (
@@ -36,16 +33,16 @@ const Login = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-muted-foreground">
-            Email
+          <Label htmlFor="userName" className="text-xs uppercase tracking-wider text-muted-foreground">
+            Tên đăng nhập
           </Label>
           <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@company.com"
-            autoComplete="email"
+            id="userName"
+            type="text"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Nhập tên đăng nhập"
+            autoComplete="username"
             className="bg-background/40 border-border"
             required
           />
@@ -54,10 +51,10 @@ const Login = () => {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Password
+              Mật khẩu
             </Label>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-              Forgot password?
+              Quên mật khẩu?
             </Link>
           </div>
           <div className="relative">
@@ -85,23 +82,23 @@ const Login = () => {
         <div className="flex items-center gap-2">
           <Checkbox id="remember" checked={remember} onCheckedChange={(v) => setRemember(!!v)} />
           <Label htmlFor="remember" className="text-xs text-muted-foreground cursor-pointer">
-            Remember me for 30 days
+            Ghi nhớ đăng nhập
           </Label>
         </div>
 
         <Button
           type="submit"
-          disabled={submitting}
+          disabled={loginMutation.isPending}
           className="w-full h-11 text-primary-foreground hover:opacity-90 shadow-glow-primary"
           style={{ background: "var(--gradient-primary)" }}
         >
-          {submitting ? "Signing in…" : "Sign in"}
+          {loginMutation.isPending ? "Đang xử lý..." : "Đăng nhập"}
         </Button>
 
         <p className="text-center text-xs text-muted-foreground pt-1">
-          Don't have an account?{" "}
+          Chưa có tài khoản?{" "}
           <Link to="/signup" className="text-primary hover:underline font-medium">
-            Create one
+            Tạo mới
           </Link>
         </p>
       </form>

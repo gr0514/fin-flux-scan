@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { AuthLayout, GoogleButton, Divider } from "@/components/auth/AuthLayout";
+import { useRegisterMutation } from "@/hooks/useAuth";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+
+  const registerMutation = useRegisterMutation();
 
   const checks = [
     { label: "8+ characters", ok: password.length >= 8 },
@@ -26,33 +26,29 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setSubmitting(false);
-    toast({ title: "Account created", description: "Welcome to MyFinAlgo!" });
-    navigate("/");
+    registerMutation.mutate({ userName, email, password });
   };
 
   return (
     <AuthLayout
       badge="Get started"
-      title="Create your account"
-      subtitle="Start monitoring fraud in realtime — free for 14 days."
+      title="Tạo tài khoản"
+      subtitle="Bắt đầu giám sát giao dịch với MyFinAlgo."
     >
-      <GoogleButton label="Sign up with Google" />
+      <GoogleButton label="Đăng ký bằng Google" />
       <Divider />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-xs uppercase tracking-wider text-muted-foreground">
-            Full name
+          <Label htmlFor="userName" className="text-xs uppercase tracking-wider text-muted-foreground">
+            Tên đăng nhập
           </Label>
           <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ada Lovelace"
-            autoComplete="name"
+            id="userName"
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            placeholder="Ví dụ: adalovelace"
+            autoComplete="username"
             className="bg-background/40 border-border"
             required
           />
@@ -60,7 +56,7 @@ const Signup = () => {
 
         <div className="space-y-2">
           <Label htmlFor="email" className="text-xs uppercase tracking-wider text-muted-foreground">
-            Work email
+            Địa chỉ Email
           </Label>
           <Input
             id="email"
@@ -76,7 +72,7 @@ const Signup = () => {
 
         <div className="space-y-2">
           <Label htmlFor="password" className="text-xs uppercase tracking-wider text-muted-foreground">
-            Password
+            Mật khẩu
           </Label>
           <div className="relative">
             <Input
@@ -137,21 +133,21 @@ const Signup = () => {
 
         <Button
           type="submit"
-          disabled={submitting || strength < 3}
+          disabled={registerMutation.isPending || strength < 3}
           className="w-full h-11 text-primary-foreground hover:opacity-90 shadow-glow-primary"
           style={{ background: "var(--gradient-primary)" }}
         >
-          {submitting ? "Creating account…" : "Create account"}
+          {registerMutation.isPending ? "Đang tạo..." : "Đăng ký tài khoản"}
         </Button>
 
         <p className="text-center text-[11px] text-muted-foreground">
-          By continuing you agree to our Terms and Privacy Policy.
+          Bằng việc đăng ký, bạn đồng ý với Điều khoản của chúng tôi.
         </p>
 
         <p className="text-center text-xs text-muted-foreground pt-1">
-          Already have an account?{" "}
+          Đã có tài khoản?{" "}
           <Link to="/login" className="text-primary hover:underline font-medium">
-            Sign in
+            Đăng nhập
           </Link>
         </p>
       </form>
