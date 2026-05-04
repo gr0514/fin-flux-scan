@@ -42,7 +42,7 @@ interface User {
   username: string;
   email: string;
   role: Role;
-  roles: Role[];
+  roles?: Role[];
   risk: RiskLevel;
   status: Status;
   lastLogin: string;
